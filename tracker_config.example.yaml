@@ -1,0 +1,7 @@
+# Local development defaults. For Docker, see tracker_config.docker.yaml.
+host: localhost
+port: "8080"
+db_conn: "file:tracker.db?_journal_mode=WAL&_foreign_keys=on&_busy_timeout=5000"
+timezone: Europe/Berlin
+username: "" # empty = any username accepted
+password: change-me

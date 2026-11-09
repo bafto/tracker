@@ -1,0 +1,31 @@
+{{define "content"}}
+<h1>Stats</h1>
+<nav class="tabs">
+  <a href="/stats?range=week" {{if eq .Range "week"}}aria-current="page"{{end}}>Week</a>
+  <a href="/stats?range=month" {{if eq .Range "month"}}aria-current="page"{{end}}>Month</a>
+  <a href="/stats?range=year" {{if eq .Range "year"}}aria-current="page"{{end}}>Year</a>
+  <a href="/stats?range=all" {{if eq .Range "all"}}aria-current="page"{{end}}>All</a>
+</nav>
+<form method="get" action="/stats" class="range">
+  <input type="hidden" name="range" value="custom">
+  <input type="date" name="from" value="{{.From}}"> – <input type="date" name="to" value="{{.To}}">
+  <button>Show</button>
+</form>
+
+{{if not .Rows}}<p class="card center">No activities yet.</p>{{end}}
+<ul class="statcards">
+{{range .Rows}}
+<li class="card" style="--c: {{.Activity.Color}}">
+  <div class="statname"><span class="dot"></span><b>{{.Activity.Name}}</b> <span class="muted small">{{.Label}}{{if .Activity.Archived}} · archived{{end}}</span></div>
+  <div class="statgrid">
+    <div><span class="big">{{.Stats.DoneCount}}</span><span class="muted">times</span></div>
+    {{if .Activity.Unit}}<div><span class="big">{{printf "%.4g" .Stats.AmountSum}}</span><span class="muted">{{.Activity.Unit}}</span></div>{{end}}
+    <div>{{$p := .Stats.CompletionPercent}}<span class="big">{{if lt $p 0}}–{{else}}{{$p}}%{{end}}</span><span class="muted">of target</span></div>
+    <div><span class="big">{{.Stats.CurrentStreak}}</span><span class="muted">streak ({{.Stats.StreakUnit}})</span></div>
+    <div><span class="big">{{.Stats.LongestStreak}}</span><span class="muted">best streak</span></div>
+  </div>
+  {{if ge .Stats.Target 1}}<div class="bar"><span style="width: {{.Stats.CompletionPercent}}%"></span></div>{{end}}
+</li>
+{{end}}
+</ul>
+{{end}}

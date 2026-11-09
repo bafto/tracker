@@ -1,0 +1,45 @@
+{{define "content"}}
+<div class="daynav">
+  <a class="btn" href="/calendar?month={{.Prev}}" aria-label="Previous month">‹</a>
+  <div class="daytitle"><h1>{{.Month}}</h1></div>
+  {{if .Next}}<a class="btn" href="/calendar?month={{.Next}}" aria-label="Next month">›</a>{{else}}<span class="btn disabled">›</span>{{end}}
+</div>
+
+{{if not .Rows}}<p class="card center">Nothing to show for this month.</p>{{else}}
+<div class="calwrap">
+<table class="cal">
+  <thead>
+    <tr>
+      <th class="sticky"></th>
+      {{range .Days}}
+      <th class="{{if .Today}}today{{end}}{{if .Weekend}} weekend{{end}}">
+        {{if .Future}}<span>{{.Weekday}}<br>{{.Num}}</span>{{else}}<a href="/day/{{.Day}}">{{.Weekday}}<br>{{.Num}}</a>{{end}}
+      </th>
+      {{end}}
+      <th>Σ</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Rows}}{{$unit := .Activity.Unit}}
+    <tr style="--c: {{.Activity.Color}}">
+      <th class="sticky act"><span class="dot"></span>{{.Activity.Name}}<small>{{.Label}}</small></th>
+      {{range .Cells}}
+      <td class="{{if .Entry}}done{{else if .Missed}}missed{{else if .Due}}due{{end}}{{if .Future}} future{{end}}"
+          {{with .Entry}}title="{{fmtAmount .Amount}} {{$unit}} {{.Note}}"{{end}}>
+        {{if .Future}}{{else}}<a href="/day/{{.Day}}">{{with .Entry}}{{if .Amount}}{{fmtAmount .Amount}}{{else}}✓{{end}}{{end}}</a>{{end}}
+      </td>
+      {{end}}
+      <td class="sum">{{.Count}}</td>
+    </tr>
+    {{end}}
+    <tr class="notes">
+      <th class="sticky act">Journal</th>
+      {{range .Days}}<td>{{if .Note}}<a href="/day/{{.Day}}" title="{{.Note}}">✎</a>{{end}}</td>{{end}}
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="legend muted small"><span class="sw done"></span> done <span class="sw missed"></span> missed <span class="sw due"></span> due</p>
+{{end}}
+{{end}}

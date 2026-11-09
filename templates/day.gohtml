@@ -1,0 +1,63 @@
+{{define "content"}}
+<div class="daynav">
+  <a class="btn" href="/day/{{.Prev}}" aria-label="Previous day">‹</a>
+  <div class="daytitle">
+    <h1>{{if .IsToday}}Today{{else}}{{.Day.Format "Mon 2 Jan"}}{{end}}</h1>
+    <span class="muted">{{longDay .Day}}</span>
+  </div>
+  {{if .Next}}<a class="btn" href="/day/{{.Next}}" aria-label="Next day">›</a>{{else}}<span class="btn disabled">›</span>{{end}}
+</div>
+{{if not .IsToday}}<p class="center"><a href="/day/today">Back to today</a></p>{{end}}
+
+{{if and (not .Due) (not .NotDue)}}
+<p class="card center">No activities yet. <a href="/activities/new">Add one</a>.</p>
+{{end}}
+
+{{if .Due}}
+<h2>Due</h2>
+<ul class="rows">{{range .Due}}{{template "day_row" .}}{{end}}</ul>
+{{end}}
+
+{{if .NotDue}}
+<details class="notdue" {{if not .Due}}open{{end}}>
+  <summary><h2>Not due ({{len .NotDue}})</h2></summary>
+  <ul class="rows">{{range .NotDue}}{{template "day_row" .}}{{end}}</ul>
+</details>
+{{end}}
+
+<h2>Journal</h2>
+<form method="post" action="/day/{{fmtDay .Day}}/note" class="journal">
+  <textarea name="note" rows="3" placeholder="How was the day?">{{.Note}}</textarea>
+  <button>Save note</button>
+</form>
+{{end}}
+
+{{define "day_row"}}
+<li class="row{{if .Entry}} done{{end}}" style="--c: {{.Activity.Color}}">
+  <form method="post" action="/day/{{.Day}}/activity/{{.Activity.ID}}/toggle"
+        hx-post="/day/{{.Day}}/activity/{{.Activity.ID}}/toggle" hx-target="closest li" hx-swap="outerHTML">
+    <button class="check" aria-label="{{if .Entry}}Mark not done{{else}}Mark done{{end}}">{{if .Entry}}✓{{end}}</button>
+  </form>
+  <div class="info">
+    <div class="name">{{.Activity.Name}}</div>
+    <div class="meta">
+      {{.Schedule.Label}}{{if .Weekly}} · {{.WeekCount}}/{{.Schedule.TimesPerWeek}} this week{{end}}
+      {{with .Entry}}{{with .Amount}} · <b>{{fmtAmount .}} {{$.Activity.Unit}}</b>{{end}}{{end}}
+    </div>
+    {{with .Entry}}{{with .Note}}<div class="note">{{.}}</div>{{end}}{{end}}
+  </div>
+  <details class="edit">
+    <summary aria-label="Details">✎</summary>
+    <form method="post" action="/day/{{.Day}}/activity/{{.Activity.ID}}"
+          hx-post="/day/{{.Day}}/activity/{{.Activity.ID}}" hx-target="closest li" hx-swap="outerHTML">
+      {{if .Activity.Unit}}
+      <label>Amount
+        <span class="unitinput"><input name="amount" type="text" inputmode="decimal" value="{{with .Entry}}{{fmtAmount .Amount}}{{end}}"> {{.Activity.Unit}}</span>
+      </label>
+      {{end}}
+      <label>Note <input name="note" type="text" value="{{with .Entry}}{{.Note}}{{end}}"></label>
+      <button class="primary">Save{{if not .Entry}} &amp; mark done{{end}}</button>
+    </form>
+  </details>
+</li>
+{{end}}

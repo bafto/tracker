@@ -1,0 +1,26 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}} · Tracker</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✓</text></svg>">
+<script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+{{if .Nav}}
+<header class="topbar">
+  <nav>
+    <a href="/day/today" {{if eq .Nav "day"}}aria-current="page"{{end}}>Today</a>
+    <a href="/calendar" {{if eq .Nav "calendar"}}aria-current="page"{{end}}>Calendar</a>
+    <a href="/stats" {{if eq .Nav "stats"}}aria-current="page"{{end}}>Stats</a>
+    <a href="/activities" {{if eq .Nav "activities"}}aria-current="page"{{end}}>Activities</a>
+  </nav>
+</header>
+{{end}}
+<main>
+{{template "content" .}}
+</main>
+</body>
+</html>{{end}}

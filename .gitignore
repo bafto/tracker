@@ -1,0 +1,6 @@
+*.db
+*.db-shm
+*.db-wal
+tracker_config.yaml
+/tracker
+/data

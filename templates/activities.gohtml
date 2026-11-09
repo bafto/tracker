@@ -1,0 +1,39 @@
+{{define "content"}}
+<div class="pagehead">
+  <h1>Activities</h1>
+  <a class="btn primary" href="/activities/new">+ New</a>
+</div>
+
+{{if not .Active}}<p class="card center">No activities yet.</p>{{end}}
+<ul class="rows">
+{{range .Active}}{{template "activity_item" .}}{{end}}
+</ul>
+
+{{if .Archived}}
+<details class="notdue">
+  <summary><h2>Archived ({{len .Archived}})</h2></summary>
+  <ul class="rows">{{range .Archived}}{{template "activity_item" .}}{{end}}</ul>
+</details>
+{{end}}
+
+<p class="center"><a href="/export.csv">Export all data as CSV</a></p>
+{{end}}
+
+{{define "activity_item"}}
+<li class="row" style="--c: {{.Color}}">
+  <span class="dot"></span>
+  <div class="info">
+    <div class="name"><a href="/activities/{{.ID}}/edit">{{.Name}}</a></div>
+    <div class="meta">{{.CurrentSchedule.Label}}{{with .Unit}} · in {{.}}{{end}}</div>
+  </div>
+  <div class="actions">
+    <form method="post" action="/activities/{{.ID}}/move?dir=up"><button title="Move up">↑</button></form>
+    <form method="post" action="/activities/{{.ID}}/move?dir=down"><button title="Move down">↓</button></form>
+    {{if .Archived}}
+    <form method="post" action="/activities/{{.ID}}/unarchive"><button>Restore</button></form>
+    {{else}}
+    <form method="post" action="/activities/{{.ID}}/archive"><button title="Archive">Archive</button></form>
+    {{end}}
+  </div>
+</li>
+{{end}}

@@ -1,0 +1,35 @@
+{{define "content"}}
+<h1>{{if .ID}}Edit activity{{else}}New activity{{end}}</h1>
+<form method="post" action="{{if .ID}}/activities/{{.ID}}{{else}}/activities{{end}}" class="card stack">
+  <label>Name
+    <input name="name" value="{{.Form.Name}}" required autofocus>
+    {{with .Problems.name}}<span class="error">{{.}}</span>{{end}}
+  </label>
+  <label>Unit <span class="muted">(optional, e.g. min, km, pages – leave empty for a plain checkbox)</span>
+    <input name="unit" value="{{.Form.Unit}}">
+  </label>
+  <label>Color <input type="color" name="color" value="{{.Form.Color}}"></label>
+
+  <fieldset>
+    <legend>How often</legend>
+    <label class="inline"><input type="radio" name="kind" value="weekdays" {{if eq .Form.Kind "weekdays"}}checked{{end}}> On specific weekdays</label>
+    <label class="inline"><input type="radio" name="kind" value="weekly" {{if eq .Form.Kind "weekly"}}checked{{end}}> A number of times per week</label>
+
+    <div class="weekdays-fields days">
+      {{range seq 7}}
+      <label class="day"><input type="checkbox" name="days" value="{{.}}" {{if hasBit $.Form.WeekdayMask .}}checked{{end}}><span>{{weekdayShort .}}</span></label>
+      {{end}}
+    </div>
+    <div class="weekly-fields">
+      <label class="inline"><input type="number" name="times" min="1" max="7" value="{{.Form.TimesPerWeek}}"> times per week</label>
+    </div>
+    {{with .Problems.schedule}}<span class="error">{{.}}</span>{{end}}
+    {{if .ID}}<p class="muted small">Schedule changes apply from today on; past days keep the old schedule.</p>{{end}}
+  </fieldset>
+
+  <div class="buttons">
+    <a class="btn" href="/activities">Cancel</a>
+    <button class="primary">Save</button>
+  </div>
+</form>
+{{end}}

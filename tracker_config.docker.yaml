@@ -1,0 +1,7 @@
+# Mount as /app/tracker_config.yaml, with a data directory mounted at /data.
+host: 0.0.0.0 # must listen on all interfaces inside the container
+port: "8080"
+db_conn: "file:/data/tracker.db?_journal_mode=WAL&_foreign_keys=on&_busy_timeout=5000"
+timezone: Europe/Berlin
+username: "" # empty = any username accepted
+password: change-me
